@@ -16,6 +16,14 @@ use Sainsburys\Gateway\GatewayInterface;
 class HtmlGateway implements GatewayInterface
 {
     /**
+     * Errors from previous call.
+     * We don't want to print errors to page, can use this to log.
+     *
+     * @var array $errors
+     */
+    protected $errors;
+
+    /**
      * HttpScraper object to scrape web with.
      *
      * @var HttpScraper $scraper
@@ -52,6 +60,9 @@ class HtmlGateway implements GatewayInterface
      */
     public function getProductData($source)
     {
+        // We will save errors to an array.
+        libxml_use_internal_errors(true);
+
         if (false === $this->looksLikeUrl($source)) {
             throw new InvalidDataSourceException("This isn't a URL.");
         }
@@ -81,12 +92,12 @@ class HtmlGateway implements GatewayInterface
                                              ->querySelector("div.productText");
 
             // Set up the product data.
-            $productData          = array();
+            $productData                = array();
             $productData['title']       = trim($titleElement->textContent);
-            $productData['description'] = $descriptionElement->textContent;
+            $productData['description'] = trim($descriptionElement->textContent);
             $productData['size']        = strlen($productHtml);
-            $productData['unit_price']  = (float) str_replace(
-                '£',
+            $productData['unit_price']  = (float) preg_replace(
+                '/[^0-9.]/',
                 '',
                 $priceElement->textContent
             );
@@ -94,7 +105,22 @@ class HtmlGateway implements GatewayInterface
             $return[] = $productData;
         }
 
+        // Put errors in $this->errors.
+        $this->errors = libxml_get_errors();
+        libxml_clear_errors();
+
         return $return;
+    }
+
+    /**
+     * Get LibXML errors.
+     * This is useful for logging.
+     *
+     * @return array<LibXMLError>
+     */
+    public function getLibXMLErrors()
+    {
+        return $this->errors;
     }
 
     /**
