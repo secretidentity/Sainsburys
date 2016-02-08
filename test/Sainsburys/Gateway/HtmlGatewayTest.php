@@ -34,7 +34,7 @@ class HtmlGatewayTest extends \PHPUnit_Framework_TestCase
      * Testing the actual scraper is something we will not implement
      * as to do so accurately, we need to run a local webserver.
      */
-    public function validHtmlTest()
+    public function testParseProducts()
     {
         $gateway = new HtmlGateway($this->httpMock);
 
@@ -106,7 +106,7 @@ class HtmlGatewayTest extends \PHPUnit_Framework_TestCase
         $expectedReturn = array(
             array(
                 "title"       => "Title",
-                "size"        => "",
+                "size"        => 281,
                 "unit_price"  => 5.00,
                 "description" => "Description"
             )
@@ -117,13 +117,13 @@ class HtmlGatewayTest extends \PHPUnit_Framework_TestCase
         $expectedReturn2 = array(
             array(
                 "title"       => "Title",
-                "size"        => "",
+                "size"        => 281,
                 "unit_price"  => 5.00,
                 "description" => "Description"
             ),
             array(
                 "title"       => "Another Title",
-                "size"        => "",
+                "size"        => 289,
                 "unit_price"  => 10.00,
                 "description" => "Another Description"
             )
@@ -136,5 +136,17 @@ class HtmlGatewayTest extends \PHPUnit_Framework_TestCase
         // Test the output.
         $this->assertEquals($expectedReturn, $productData);
         $this->assertEquals($expectedReturn2, $productData2);
+    }
+
+    /**
+     * A source which isn't a URL should not be accepted.
+     */
+    public function testInvalidSource()
+    {
+        $this->setExpectedException("\\Sainsburys\\Exception\\InvalidDataSourceException");
+
+        $gateway = new HtmlGateway($this->httpMock);
+
+        $productData = $gateway->getProductData("not a url");
     }
 }
