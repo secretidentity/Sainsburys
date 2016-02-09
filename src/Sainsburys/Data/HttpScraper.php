@@ -36,9 +36,9 @@ class HttpScraper
         $data   = curl_exec($r);
         $status = curl_getinfo($r);
 
-        if (1 === preg_match('/^2/', $status['http_code'])) { // If the request was successful.
+        if (1 === preg_match('/^2/', $status['http_code'])) { // Success!
             return $data;
-        } else { // If the request failed, throw exception.
+        } else { // Failure!
             throw new HttpErrorException("Error: ".$status['http_code']);
         }
     }
