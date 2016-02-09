@@ -1,0 +1,31 @@
+{
+    "name" : "sainsburys/code-exercise",
+    "authors" : [
+        {
+            "name"  : "Secret Identity",
+            "email" : "secret.identity@gmx.co.uk",
+            "role"  : "Senior Software Engineer"
+        }
+    ],
+    "config" : {
+        "bin-dir" : "bin/"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "" : "src/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Test\\" : "test/"
+        }
+    },
+    "require" : {
+        "php"                        : ">=5.6.0",
+        "fluentdom/fluentdom"        : ">=5.3",
+        "fluentdom/selectors-phpcss" : ">=1.0.0"
+    },
+    "require-dev" : {
+        "phpunit/phpunit" : "5.1.*"
+    }
+}
